@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EduPrep AI - Smart Academic & Career Coach</title>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- Highlight.js for Code Highlighting -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  
+  <!-- Marked.js for Markdown Rendering -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="brand">
+          <div class="brand-icon">
+            <i class="fa-solid fa-graduation-cap"></i>
+          </div>
+          <div>
+            <h1 class="brand-title">EduPrep AI</h1>
+            <span class="brand-badge">Gemini 3.8 Flash</span>
+          </div>
+        </div>
+        <button class="sidebar-close-btn" id="sidebarCloseBtn" aria-label="Tutup Menu">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="sidebar-content">
+        <!-- Persona Selector Section -->
+        <div class="config-group">
+          <label class="config-label">
+            <i class="fa-solid fa-user-astronaut"></i> Persona &amp; Use Case
+          </label>
+          <div class="persona-selector">
+            <button class="persona-card active" data-persona="career_coach">
+              <div class="persona-icon"><i class="fa-solid fa-briefcase"></i></div>
+              <div class="persona-info">
+                <h4>Career &amp; Mock Interview</h4>
+                <p>Simulasi HR, metode STAR, &amp; revisi CV</p>
+              </div>
+            </button>
+
+            <button class="persona-card" data-persona="academic_tutor">
+              <div class="persona-icon"><i class="fa-solid fa-book-open-reader"></i></div>
+              <div class="persona-info">
+                <h4>Academic Concept Tutor</h4>
+                <p>Penjelasan teori, analogi, &amp; kuis mini</p>
+              </div>
+            </button>
+
+            <button class="persona-card" data-persona="productivity_mentor">
+              <div class="persona-icon"><i class="fa-solid fa-bolt"></i></div>
+              <div class="persona-info">
+                <h4>Study &amp; Productivity Mentor</h4>
+                <p>Jadwal Pomodoro &amp; roadmap 30 hari</p>
+              </div>
+            </button>
+          </div>
+        </div>
+
+        <!-- Tone & Parameters Section -->
+        <div class="config-group">
+          <label class="config-label">
+            <i class="fa-solid fa-sliders"></i> Parameter Kreatif
+          </label>
+
+          <!-- Tone Selector -->
+          <div class="param-item">
+            <span class="param-title">Gaya Bahasa (Tone):</span>
+            <div class="radio-pills" id="toneSelector">
+              <button class="pill-btn active" data-val="formal">Formal</button>
+              <button class="pill-btn" data-val="casual">Santai</button>
+              <button class="pill-btn" data-val="motivational">Motivatif</button>
+            </div>
+          </div>
+
+          <!-- Depth Selector -->
+          <div class="param-item">
+            <span class="param-title">Kedalaman Respon:</span>
+            <div class="radio-pills" id="depthSelector">
+              <button class="pill-btn" data-val="concise">Ringkas</button>
+              <button class="pill-btn active" data-val="balanced">Terstruktur</button>
+              <button class="pill-btn" data-val="comprehensive">Mendalam</button>
+            </div>
+          </div>
+
+          <!-- Temperature Slider -->
+          <div class="param-item">
+            <div class="param-header-flex">
+              <span class="param-title">Kreativitas (Temperature):</span>
+              <span class="param-value-tag" id="tempValueDisplay">0.7</span>
+            </div>
+            <input type="range" id="tempSlider" min="0" max="1" step="0.1" value="0.7" class="custom-range">
+            <div class="slider-labels">
+              <span>0.0 Presisi</span>
+              <span>1.0 Kreatif</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- System Architecture Pill / Info -->
+        <div class="system-meta-card">
+          <div class="meta-row">
+            <span><i class="fa-solid fa-circle-check status-dot"></i> Status API:</span>
+            <span class="meta-badge" id="apiStatusBadge">Connecting...</span>
+          </div>
+          <div class="meta-row">
+            <span><i class="fa-solid fa-microchip"></i> Engine LLM:</span>
+            <span class="meta-value">Gemini 3.8 Flash</span>
+          </div>
+          <div class="meta-row">
+            <span><i class="fa-solid fa-comments"></i> Konteks Pesan:</span>
+            <span class="meta-value" id="msgCountBadge">0 Pesan</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sidebar Footer -->
+      <div class="sidebar-footer">
+        <button class="btn btn-outline" id="clearChatBtn" title="Reset percakapan">
+          <i class="fa-solid fa-trash-can"></i> Bersihkan Chat
+        </button>
+        <button class="btn btn-outline" id="exportChatBtn" title="Ekspor riwayat obrolan">
+          <i class="fa-solid fa-file-arrow-down"></i> Ekspor Riwayat
+        </button>
+        <button class="btn btn-info" id="systemInfoBtn" title="Lihat arsitektur sistem">
+          <i class="fa-solid fa-circle-info"></i> Info Sistem
+        </button>
+      </div>
+    </aside>
+
+    <!-- Overlay for mobile sidebar -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Main Chat Workspace -->
+    <main class="chat-workspace">
+      <!-- Chat Header -->
+      <header class="chat-header">
+        <div class="header-left">
+          <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Buka Menu">
+            <i class="fa-solid fa-bars"></i>
+          </button>
+          <div class="active-persona-indicator">
+            <div class="persona-avatar" id="headerAvatar">
+              <i class="fa-solid fa-briefcase"></i>
+            </div>
+            <div>
+              <h2 id="headerPersonaTitle">Career &amp; Mock Interview Coach</h2>
+              <span class="persona-subtext" id="headerPersonaSub">Mode Simulasi HR &bull; Metode STAR</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="header-right">
+          <div class="pill-badge">
+            <span class="pulse-indicator"></span>
+            <span id="headerModeSummary">Formal &bull; Terstruktur</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Chat Stream Messages -->
+      <section class="chat-stream" id="chatStream">
+        <!-- Welcome Hero Banner -->
+        <div class="welcome-hero" id="welcomeHero">
+          <div class="hero-icon-glow">
+            <i class="fa-solid fa-brain"></i>
+          </div>
+          <h2>Selamat Datang di EduPrep AI!</h2>
+          <p>
+            Asisten cerdas berbasis <strong>Gemini 3.8 Flash</strong> yang dirancang khusus untuk memandu persiapan karir, 
+            simulasi wawancara kerja, pembelajaran konsep akademik, dan optimalisasi produktivitas belajar.
+          </p>
+
+          <div class="recommendations-box">
+            <div class="rec-header">
+              <i class="fa-solid fa-wand-magic-sparkles"></i> Rekomendasi Prompt Cepat (Klik untuk mencoba):
+            </div>
+            <div class="prompt-chips" id="recommendationChips">
+              <!-- Rendered via JavaScript based on active persona -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Input Bar Section -->
+      <footer class="chat-input-area">
+        <div class="input-wrapper">
+          <textarea 
+            id="userInput" 
+            placeholder="Ketik pertanyaan atau skenario interview kamu di sini..." 
+            rows="1"
+            maxlength="2000"
+          ></textarea>
+          
+          <div class="input-actions">
+            <span class="char-counter" id="charCounter">0/2000</span>
+            <button class="send-btn" id="sendBtn" title="Kirim pesan">
+              <i class="fa-solid fa-paper-plane"></i>
+            </button>
+          </div>
+        </div>
+        <div class="input-hint">
+          <span><i class="fa-solid fa-keyboard"></i> <strong>Enter</strong> untuk mengirim &bull; <strong>Shift + Enter</strong> untuk baris baru</span>
+        </div>
+      </footer>
+    </main>
+  </div>
+
+  <!-- System Architecture Modal -->
+  <div class="modal" id="infoModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-diagram-project"></i> Arsitektur &amp; Desain EduPrep AI</h3>
+        <button class="modal-close" id="modalCloseBtn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <h4>1. Latar Belakang &amp; Use Case</h4>
+        <p>
+          EduPrep AI adalah platform chatbot pintar yang memadukan kapabilitas <em>Large Language Model</em> (LLM) 
+          dengan arsitektur modular multi-persona. Sistem ini memberikan pendampingan yang adaptif terhadap profil pengguna: 
+          mulai dari simulasi wawancara teknis/HR, asistensi teori akademik, hingga strategi produktivitas.
+        </p>
+
+        <h4>2. Konfigurasi Parameter Kreatif</h4>
+        <ul>
+          <li><strong>Dynamic Persona &amp; System Instruction:</strong> Server secara dinamis menyusun instruksi sistem (system prompt) sesuai domain pengetahuan yang dipilih.</li>
+          <li><strong>Gaya Bahasa (Tone):</strong> Mengontrol ragam bahasa (Formal baku, Santai komunikatif, atau Motivatif).</li>
+          <li><strong>Kedalaman Respon (Depth):</strong> Mengatur granulasi keluaran (Ringkas to-the-point vs Analisis komprehensif).</li>
+          <li><strong>Kreativitas (Temperature):</strong> Memodulasi tingkat determinisme model AI dari presisi faktual (0.0) hingga eksplorasi ide kreatif (1.0).</li>
+          <li><strong>Contextual Memory:</strong> Mempertahankan riwayat percakapan multi-turn secara runut di sisi klien dan dikirimkan ke model AI untuk menjaga relevansi konteks.</li>
+        </ul>
+
+        <h4>3. Spesifikasi Teknologi</h4>
+        <ul>
+          <li><strong>Backend:</strong> Node.js, Express.js, <code>@google/genai</code> SDK, CORS, Dotenv.</li>
+          <li><strong>Frontend:</strong> Modern Responsive Vanilla JS, Glassmorphic CSS Theme, Marked.js, Highlight.js, FontAwesome.</li>
+          <li><strong>Model AI:</strong> Google Gemini 3.8 Flash API.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
