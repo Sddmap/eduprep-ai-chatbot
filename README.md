@@ -2,7 +2,7 @@
 
 [![Node.js Version](https://img.shields.io/badge/Node.js-v18%2B-green.svg)](https://nodejs.org/)
 [![AI Model](https://img.shields.io/badge/Model-Gemini%203.8%20Flash-blue.svg)](https://ai.google.dev/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 
 > **EduPrep AI** adalah sistem chatbot berbasis kecerdasan buatan (*Artificial Intelligence*) yang saya rancang secara khusus untuk menjadi asisten interaktif multi-persona dalam persiapan karier profesional, simulasi wawancara kerja, pembelajaran konsep akademik, dan optimalisasi produktivitas belajar.
 
